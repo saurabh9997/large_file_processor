@@ -44,8 +44,16 @@ def upload_file():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        LoadData.preprocess_data(os.getcwd() + '/uploads/' + filename)
-        status = d.upload_file(os.getcwd() + '/processed_data/preprocessed.csv')
+        if os.path.isdir(os.getcwd() + '/uploads'):
+            LoadData.preprocess_data(os.getcwd() + '/uploads/' + filename)
+        else:
+            os.makedirs(os.getcwd() + '/uploads')
+            LoadData.preprocess_data(os.getcwd() + '/uploads/' + filename)
+        if os.path.isdir(os.getcwd()+'/processed_data'):
+            status = d.upload_file(os.getcwd() + '/processed_data/preprocessed.csv')
+        else:
+            os.makedirs(os.getcwd() + '/processed_data')
+            status = d.upload_file(os.getcwd() + '/processed_data/preprocessed.csv')
         if status is None:
             resp = jsonify({'message': 'File successfully uploaded'})
             resp.status_code = 201
