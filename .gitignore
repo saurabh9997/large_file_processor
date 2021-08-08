@@ -127,5 +127,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-/uploads/products.csv
-/processed_data/preprocessed.csv
