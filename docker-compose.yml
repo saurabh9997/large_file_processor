@@ -18,6 +18,7 @@ services:
     command: -p 9433
 
   flask:
+    image: flask
     build:
       context: .
       dockerfile: Dockerfile
