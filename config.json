@@ -1,7 +1,8 @@
 {
   "postgres": {
     "host": "0.0.0.0",
-    "user": "admin",
+    "port": "9433",
+    "user": "postgres",
     "passwd": "password",
     "db": "postman"
   }

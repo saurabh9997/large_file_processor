@@ -1,11 +1,32 @@
-version: '3.1'
+version: '3.5'
 services:
-  db:
+  database:
+    container_name: PostgresDb
     image: postgres:latest
-    restart: always
-    ports:
-      - 9453:9453
-    environment:
-      POSTGRES_PASSWORD: postgres
+    environment: # or use env_file as you did above
       POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: 0.0.0.0     # This is the name of the database service in this file above
+      POSTGRES_PORT: 9433
+      POSTGRES_DB: postman
+    expose:
+      - "9433" # Publishes 9433 to other containers but NOT to host machine
+    ports:
+        - "9433:9433"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    command: -p 9433
+
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/large_file_processor
+    depends_on:
+      - database
+
+volumes:
+  postgres-data:

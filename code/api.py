@@ -1,11 +1,9 @@
 import json
 import os
-
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
 from flask import Flask
-
-from database.db_functions import DBConnection
+from db_functions import DBConnection
 from main import LoadData
 
 UPLOAD_FOLDER = os.getcwd() + '/uploads'
@@ -22,16 +20,21 @@ def allowed_file(filename):
 
 
 def get_config():
-    with open(os.getcwd() + 'code/database/config.json', 'r') as f:
+    with open(os.getcwd() + '/config.json', 'r') as f:
         config = json.load(f)
     return config
+
+
+@app.route('/test', methods=['GET'])
+def Main():
+    return 'Welcome to the Test API!'
 
 
 @app.route('/file-upload', methods=['POST'])
 def upload_file():
     config = get_config()
     d = DBConnection(config['postgres']['db'], config['postgres']['user'], config['postgres']['passwd'],
-                     config['postgres']['host'])
+                     config['postgres']['host'], config['postgres']['port'])
     if 'file' not in request.files:
         resp = jsonify({'message': 'No file part in the request'})
         resp.status_code = 400
@@ -49,7 +52,7 @@ def upload_file():
         else:
             os.makedirs(os.getcwd() + '/uploads')
             LoadData.preprocess_data(os.getcwd() + '/uploads/' + filename)
-        if os.path.isdir(os.getcwd()+'/processed_data'):
+        if os.path.isdir(os.getcwd() + '/processed_data'):
             status = d.upload_file(os.getcwd() + '/processed_data/preprocessed.csv')
         else:
             os.makedirs(os.getcwd() + '/processed_data')
@@ -71,7 +74,7 @@ def upload_file():
 def update_table():
     config = get_config()
     d = DBConnection(config['postgres']['db'], config['postgres']['user'], config['postgres']['passwd'],
-                     config['postgres']['host'])
+                     config['postgres']['host'], config['postgres']['port'])
     if 'file' not in request.files:
         resp = jsonify({'message': 'No file part in the request'})
         resp.status_code = 400
@@ -102,7 +105,7 @@ def update_table():
 def fetch_data():
     config = get_config()
     d = DBConnection(config['postgres']['db'], config['postgres']['user'], config['postgres']['passwd'],
-                     config['postgres']['host'])
+                     config['postgres']['host'], config['postgres']['port'])
     limit = None
     if request.method == 'GET':
         fetched_data = d.fetch_table_data(limit)
@@ -114,4 +117,4 @@ def fetch_data():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')

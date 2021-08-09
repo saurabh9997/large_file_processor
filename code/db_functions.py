@@ -2,11 +2,12 @@ import psycopg2
 
 
 class DBConnection:
-    def __init__(self, dbname, user, password, host):
+    def __init__(self, dbname, user, password, host, port):
         self.dbname = dbname
         self.user = user
         self.password = password
         self.host = host
+        self.port = port
 
     def __check_connection(self):
         """
@@ -17,7 +18,8 @@ class DBConnection:
             host=self.host,
             user=self.user,
             password=self.password,
-            dbname=self.dbname
+            dbname=self.dbname,
+            port=self.port
         )
         if conn:
             return conn
@@ -28,8 +30,8 @@ class DBConnection:
         :param filelocation: location of processed file
         :return: error if present
         """
+        con = self.__check_connection()
         try:
-            con = self.__check_connection()
             cur = con.cursor()
             query = f"""
                         begin;
@@ -60,8 +62,8 @@ class DBConnection:
         Function is used update table in database
         :param filelocation: filelocation where data is stored
         """
+        con = self.__check_connection()
         try:
-            con = self.__check_connection()
             cur = con.cursor()
             query = f"""
                             begin;
@@ -119,8 +121,8 @@ class DBConnection:
         :param limit: no of data we want
         :return: list of data dictionary
         """
+        con = self.__check_connection()
         try:
-            con = self.__check_connection()
             cur = con.cursor()
             data_limit = limit
             data_list = []
