@@ -2,8 +2,9 @@
 
 ## Steps
 1) Clone The repo https://github.com/saurabh9997/large_file_processor.git
-2) Run The Dockerfile
-3) Hit The Api using curl or postman
+2) create image :- docker build -t processor .
+3) run the docker container :- docker run -p 5000:5000 processor
+4) Hit The Api using curl or postman
 
 if not worked using docker.
 1) update the config.json in code/database with db credentials
